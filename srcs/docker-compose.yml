@@ -1,0 +1,33 @@
+networks:
+	inception-net:
+		driver: bridge
+
+services:
+	mariadb:
+		build: ./requirements/mariadb
+		container_name: mariadb
+		volumes:
+			- db-data:/var/lib/mysql
+		networks:
+			- inception-net
+		env_file: .env
+		restart: unless-stopped 
+
+	#nginx:
+
+	#wordpress:
+
+volumes:
+	db-data:
+		drive: local
+		driver_opts:
+			type: none
+			o: bind
+			device: /home/${USER}/data/mariadb
+
+	# wp-files:
+	# 	drive: local
+	# 	driver_opts:
+	# 		type: none
+	# 		o: bind
+	# 		device: /home/${USER}/data/wordpress
