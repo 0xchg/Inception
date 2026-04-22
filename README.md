@@ -14,3 +14,6 @@ Kerrisk, M. (2010). The Linux programming interface: A Linux and UNIX system pro
 
 Lacroix, J. (2016). Mastering Ubuntu Server: Gain expertise in the art of deploying, configuring, managing, and troubleshooting Ubuntu Server (3rd ed.). Packt Publishing.
 
+### WordPress
+
+[FPM Configuration](https://www.php.net/manual/en/install.fpm.configuration.php) - PHP Manual
