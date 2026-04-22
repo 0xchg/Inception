@@ -18,7 +18,8 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
-    #volumes:
+    volumes:
+      - wp-files:/var/www/html
     networks:
       - inception-net
     env_file: .env
@@ -35,12 +36,12 @@ volumes:
       o: bind
       device: /home/${USER}/data/mariadb
 
-  # wp-files:
-  # 	drive: local
-  # 	driver_opts:
-  # 		type: none
-  # 		o: bind
-  # 		device: /home/${USER}/data/wordpress
+  wp-files:
+    drive: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/wordpress
 
   # secrets:
     # luanda:
