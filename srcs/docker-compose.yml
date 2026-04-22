@@ -13,9 +13,19 @@ services:
     env_file: .env
     restart: unless-stopped 
 
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    #volumes:
+    networks:
+      - inception-net
+    env_file: .env
+    restart: unless-stopped  
+
   #nginx:
 
-  #wordpress:
 
 volumes:
   db-data:
@@ -31,3 +41,7 @@ volumes:
   # 		type: none
   # 		o: bind
   # 		device: /home/${USER}/data/wordpress
+
+  # secrets:
+    # luanda:
+    #  file: path
