@@ -43,7 +43,7 @@ services:
     secrets:
       - db_password
       - wp_user_password
-      - wp_root_password
+      - wp_admin_password
 
 
 volumes:
@@ -68,4 +68,6 @@ secrets:
     file: ../secrets/db_root_password.txt
   wp_user_password:
     file: ../secrets/wp_user_password.txt
+  wp_admin_password:
+    file: ../secrets/wp_admin_password.txt
 
