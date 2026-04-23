@@ -2,7 +2,7 @@
 set -e
 
 # Espera que o MariaDB esteja pronto
-until mysqladmin ping -h mariadb -u ${DB_USER} -p${DB_PASSWORD} --silent 2>/dev/null; do
+until mysqladmin ping -h mariadb -u ${DB_USER} -p$(cat /run/secrets/db_password.txt) --silent 2>/dev/null; do
     echo "A aguardar MariaDB..."
     sleep 2
 done
@@ -14,7 +14,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     wp config create --path=/var/www/html \
         --dbname=${DB_NAME} \
         --dbuser=${DB_USER} \
-        --dbpass=${DB_PASSWORD} \
+        --dbpass=$(cat /run/secrets/db_password.txt) \
         --dbhost=mariadb \
         --allow-root
 
@@ -22,13 +22,13 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --url=https://${DOMAIN_NAME} \
         --title="0xchg World" \
         --admin_user=${WP_ADMIN_USER} \
-        --admin_password=${WP_ADMIN_PASSWORD} \
+        --admin_password=$(cat /run/secrets/wp_admin_password.txt) \
         --admin_email=${WP_ADMIN_EMAIL} \
         --allow-root
 
     wp user create --path=/var/www/html \
         ${WP_USER} ${WP_USER_EMAIL} \
-        --user_pass=${WP_USER_PASSWORD} \
+        --user_pass=$(cat /run/secrets/wp_user_password.txt) \
         --role=author \
         --allow-root
 

@@ -11,7 +11,10 @@ services:
     networks:
       - inception-net
     env_file: .env
-    restart: unless-stopped 
+    restart: unless-stopped
+    secrets:
+      - db_password
+      - db_root_password
 
   wordpress:
     build: ./requirements/wordpress
@@ -25,7 +28,22 @@ services:
     env_file: .env
     restart: unless-stopped  
 
-  #nginx:
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    volumes:
+      - wp-files:/var/www/html
+    networks:
+      - inception-net
+    restart: unless-stopped
+    secrets:
+      - db_password
+      - wp_user_password
+      - wp_root_password
 
 
 volumes:
@@ -43,6 +61,11 @@ volumes:
       o: bind
       device: /home/${USER}/data/wordpress
 
-  # secrets:
-    # luanda:
-    #  file: path
+secrets:
+  db_password:
+    file: ../secrets/db_password.txt
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
+
