@@ -37,7 +37,7 @@ volumes:
       device: /home/${USER}/data/mariadb
 
   wp-files:
-    drive: local
+    driver: local
     driver_opts:
       type: none
       o: bind
