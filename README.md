@@ -17,3 +17,8 @@ Lacroix, J. (2016). Mastering Ubuntu Server: Gain expertise in the art of deploy
 ### WordPress
 
 [FPM Configuration](https://www.php.net/manual/en/install.fpm.configuration.php) - PHP Manual
+
+[What is ssl?](https://www.ssl.com/article/what-is-ssl-tls-an-in-depth-guide/)
+
+[install your ssl certificate on a nginx server](https://knowledge.digicert.com/tutorials/how-to-create-a-csr-using-openssl-and-install-your-ssl-certificate-on-a-nginx-server) 
+
