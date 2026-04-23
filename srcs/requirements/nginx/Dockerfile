@@ -10,8 +10,9 @@ RUN mkdir -p /etc/nginx/ssl && \
     -out /etc/nginx/ssl/cert.pem \
     -subj "/C=AO/ST=Luanda/L=Luanda/O=42/CN=mchingi.42.fr"
 
+COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY conf/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 443
 
-CMD ["nginx", "-g" "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
