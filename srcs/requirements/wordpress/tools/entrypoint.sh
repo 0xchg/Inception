@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Espera que o MariaDB esteja pronto
+until mysqladmin ping -h mariadb -u ${DB_USER} -p${DB_PASSWORD} --silent 2>/dev/null; do
+    echo "A aguardar MariaDB..."
+    sleep 2
+done
+
 if [ ! -f /var/www/html/wp-config.php ]; then
 
     wp core download --path=/var/www/html --allow-root
@@ -17,7 +23,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --title="0xchg World" \
         --admin_user=${WP_ADMIN_USER} \
         --admin_password=${WP_ADMIN_PASSWORD} \
-        --admin_emain=${WP_ADMIN_EMAIL} \
+        --admin_email=${WP_ADMIN_EMAIL} \
         --allow-root
 
     wp user create --path=/var/www/html \

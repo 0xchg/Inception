@@ -16,7 +16,7 @@ RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh
     chmod +x /usr/local/bin/wp
 
 COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
-COPY conf/entrypoint.sh /entrypoint.sh
+COPY tools/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh && \
     mkdir -p /var/www/html && \
