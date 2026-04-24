@@ -14,7 +14,18 @@ The infrastructure is composed of three services, each running in its own dedica
 
 - **MariaDB**
 
-<!-- ------ Instructions ------ -->
+The containers communicate through a private Docker Network. Data is persisted via Docker named volumes. No ready-made images are used: every container is built from a custom Dockerfile based on Debian 12.
+
+### Design Choise
+
+**Why Debian 12 as the base image?**
+Debian provides a stable, well-documented environment with a mature package manager. Alpine Linux would produce smaller images but uses `musl libc` instead of `glibc`, which can cause unexpected behaviour with certain packages. For a learning project where predictability matters, Debian is the safer choice also because i'm already used to it.
+
+---
+
+## Instructions 
+
+
 
 ---
 
