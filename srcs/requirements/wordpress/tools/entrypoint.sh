@@ -14,7 +14,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     wp config create --path=/var/www/html \
         --dbname=${DB_NAME} \
         --dbuser=${DB_USER} \
-        --dbpass=$(cat /run/secrets/db_password.txt) \
+        --dbpass=$(cat /run/secrets/db_password) \
         --dbhost=mariadb \
         --allow-root
 
@@ -22,13 +22,13 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --url=https://${DOMAIN_NAME} \
         --title="0xchg World" \
         --admin_user=${WP_ADMIN_USER} \
-        --admin_password=$(cat /run/secrets/wp_admin_password.txt) \
+        --admin_password=$(cat /run/secrets/wp_admin_password) \
         --admin_email=${WP_ADMIN_EMAIL} \
         --allow-root
 
     wp user create --path=/var/www/html \
         ${WP_USER} ${WP_USER_EMAIL} \
-        --user_pass=$(cat /run/secrets/wp_user_password.txt) \
+        --user_pass=$(cat /run/secrets/wp_user_password) \
         --role=author \
         --allow-root
 
