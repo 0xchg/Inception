@@ -26,7 +26,11 @@ services:
     networks:
       - inception-net
     env_file: .env
-    restart: unless-stopped  
+    restart: unless-stopped 
+    secrets:
+      - db_password
+      - wp_user_password
+      - wp_admin_password
 
   nginx:
     build: ./requirements/nginx
@@ -40,10 +44,6 @@ services:
     networks:
       - inception-net
     restart: unless-stopped
-    secrets:
-      - db_password
-      - wp_user_password
-      - wp_admin_password
 
 
 volumes:
