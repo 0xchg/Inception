@@ -81,6 +81,40 @@ WP_USER=regularuser
 WP_USER_EMAIL=user@mchingi.42.fr
 ```
 
+### Build and Run
+
+```bash
+# Build and start all containers
+make
+
+# Stop all containers
+make down
+
+# Rebuild everything from scratch
+make re
+
+# Full cleanup (removes containers, images, and data volumes)
+make fclean
+```
+
+### Verify
+
+Once running, open a browser and navigate to `https://mchingi.42.fr`. Accept the self-signed certificate warning. The WordPress site should be accessible.
+
+To verify individual containers:
+
+```bash
+# Check all containers are running
+docker ps
+
+# Check logs for a specific service
+docker logs nginx
+docker logs wordpress
+docker logs mariadb
+
+# Enter a running container for inspection
+docker exec -it mariadb bash
+```
 
 
 ---
