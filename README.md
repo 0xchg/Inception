@@ -21,11 +21,40 @@ The containers communicate through a private Docker Network. Data is persisted v
 **Why Debian 12 as the base image?**
 Debian provides a stable, well-documented environment with a mature package manager. Alpine Linux would produce smaller images but uses `musl libc` instead of `glibc`, which can cause unexpected behaviour with certain packages. For a learning project where predictability matters, Debian is the safer choice also because i'm already used to it.
 
+### Virtual Machines vs Docker
+
+
+
+### Secrets vs Environment Variables
+
+
+
+### Docker Network vs Host Network
+
+
+
+### Docker Volumes vs Bind Mounts
+
+
+
 ---
 
 ## Instructions 
 
+### Prerequisites
 
+- A virtual machine running a GNU/Linux distro (Ubuntu or Debian prefered)
+- Docker and Docker Compose installed
+- Your user added to the `docker` group (`sudo usermod -aG docker $USER`)
+
+### Configuration
+
+Clone the repository and configure the domain name:
+
+```bash
+# Add the domain to /etc/hosts
+echo "127.0.0.1     mchingi.42.fr" | sudo tee -a /etc/hosts
+```
 
 ---
 
@@ -41,6 +70,11 @@ Lacroix, J. (2016). *Mastering Ubuntu Server: Gain expertise in the art of deplo
 
 ### Documentation
 
+- [Docker Official Documentation](https://docs.docker.com/)
+- [Docker Compose Reference](https://docs.docker.com/compose/compose-file/)
+- [NGINX Documentation](https://nginx.org/en/docs/)
+- [MariaDB Knowledge Base](https://mariadb.com/kb/en/)
+- [WP-CLI Commands](https://developer.wordpress.org/cli/commands/)
 - [FPM Configuration](https://www.php.net/manual/en/install.fpm.configuration.php)
 - [What is SSL/TLS?](https://www.ssl.com/article/what-is-ssl-tls-an-in-depth-guide/)
 - [Install your SSL certificate on NGINX](https://knowledge.digicert.com/tutorials/how-to-create-a-csr-using-openssl-and-install-your-ssl-certificate-on-a-nginx-server) 
