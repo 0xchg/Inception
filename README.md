@@ -52,9 +52,36 @@ Debian provides a stable, well-documented environment with a mature package mana
 Clone the repository and configure the domain name:
 
 ```bash
+# Clone the repository to a directory
+git clone url_of_the_repository dir_name
+
 # Add the domain to /etc/hosts
 echo "127.0.0.1     mchingi.42.fr" | sudo tee -a /etc/hosts
 ```
+
+Create the `secrets/` directory at the root of the repository and populate each file with the corresponding credential:
+
+```bash
+mkdir -p secrets
+echo "your_db_password"      > secrets/db_password.txt
+echo "your_root_password"    > secrets/db_root_password.txt
+echo "your_admin_password"   > secrets/wp_admin_password.txt
+echo "your_user_password"    > secrets/wp_user_password.txt
+```
+
+Create the `.env` file inside `srcs/` with non-sensitive configuration only:
+
+```bash
+DOMAIN_NAME=mchingi.42.fr
+DB_NAME=wordpress
+DB_USER=wpuser
+WP_ADMIN_USER=wpadmin
+WP_ADMIN_EMAIL=admin@mchingi.42.fr
+WP_USER=regularuser
+WP_USER_EMAIL=user@mchingi.42.fr
+```
+
+
 
 ---
 
