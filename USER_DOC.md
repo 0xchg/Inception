@@ -46,3 +46,49 @@ https://mchingi.42.fr
 
 Your browser will show a security warning because the certificate is self-signed. This is expected — click **Advanced** and proceed to the site.
 
+**WordPress Administration Panel:**
+```
+https://mchingi.42.fr/wp-admin
+```
+
+Log in with the administrator credentials stored in `secrets/wp_admin_password.txt`. The administrator username is defined in `srcs/.env` under `WP_ADMIN_USER`.
+
+---
+
+## Locating and Managing Credentials
+
+All credentials are stored as plaintext files in the `secrets/` directory at the root of the repository:
+
+| File | Purpose |
+|---|---|
+| `secrets/db_password.txt` | WordPress database user password |
+| `secrets/db_root_password.txt` | MariaDB root password |
+| `secrets/wp_admin_password.txt` | WordPress administrator password |
+| `secrets/wp_user_password.txt` | WordPress regular user password |
+
+Non-sensitive configuration (usernames, email addresses, domain name) is in `srcs/.env`.
+
+> These files are never committed to version control. If you are setting up this project for the first time, you must create them manually — see the Developer Documentation.
+
+---
+
+## Checking That Services Are Running
+
+**See all running containers:**
+```bash
+docker ps
+```
+You should see three containers — `nginx`, `wordpress`, and `mariadb` — all with status `Up`.
+
+**Check logs for a specific service:**
+```bash
+docker logs nginx
+docker logs wordpress
+docker logs mariadb
+```
+
+**Quick connectivity check:**
+```bash
+curl -k https://mchingi.42.fr -I
+```
+A response of `HTTP/1.1 200 OK` confirms the site is up and reachable.
