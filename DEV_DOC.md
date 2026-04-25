@@ -18,6 +18,44 @@ sudo usermod -aG docker $USER
 
 ---
 
+## Repository Structure
+
+```
+inception/
+├── Makefile
+├── README.md
+├── USER_DOC.md
+├── DEV_DOC.md
+├── secrets/                        # Credential files — never committed
+│   ├── db_password.txt
+│   ├── db_root_password.txt
+│   ├── wp_admin_password.txt
+│   └── wp_user_password.txt
+└── srcs/
+    ├── docker-compose.yml
+    ├── .env                        # Non-sensitive config — never committed
+    └── requirements/
+        ├── nginx/
+        │   ├── Dockerfile
+        │   └── conf/
+        │       └── default.conf
+        ├── wordpress/
+        │   ├── Dockerfile
+        │   ├── conf/
+        │   │   └── www.conf
+        │   └── tools/
+        │       └── entrypoint.sh
+        └── mariadb/
+            ├── Dockerfile
+            ├── conf/
+            │   └── 50-server.cnf
+            └── tools/
+                ├── entrypoint.sh
+                └── template.sql
+```
+
+---
+
 ## Environment Setup
 
 ### 1. Configure the domain
@@ -65,6 +103,8 @@ mkdir -p ~/data/wordpress
 mkdir -p ~/data/mariadb
 ```
 
+---
+
 ## Building and Running
 
 All operations are performed from the repository root via the Makefile, which calls Docker Compose internally.
@@ -92,3 +132,41 @@ docker compose -f srcs/docker-compose.yml up -d --build
 ```
 
 On first run, the WordPress entrypoint detects that `wp-config.php` does not exist and performs the full installation automatically using WP-CLI. On subsequent runs it skips the installation and starts PHP-FPM directly.
+
+---
+
+## Managing Containers and Volumes
+
+**View running containers:**
+```bash
+docker ps
+```
+
+**View logs (live):**
+```bash
+docker logs -f nginx
+docker logs -f wordpress
+docker logs -f mariadb
+```
+
+**Enter a running container:**
+```bash
+docker exec -it mariadb bash
+docker exec -it wordpress bash
+docker exec -it nginx bash
+```
+
+**Inspect a container (network, mounts, env):**
+```bash
+docker inspect mariadb
+```
+
+**List volumes:**
+```bash
+docker volume ls
+```
+
+**Remove unused images, containers, and networks:**
+```bash
+docker system prune -f
+```
