@@ -51,7 +51,7 @@ services:
     container_name: redis
     networks:
       - inception-net
-    restart: unsless-stopped
+    restart: unless-stopped
 
 volumes:
   db-data:
