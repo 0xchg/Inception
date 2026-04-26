@@ -21,6 +21,7 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
+      - redis
     volumes:
       - wp-files:/var/www/html
     networks:
@@ -45,6 +46,12 @@ services:
       - inception-net
     restart: unless-stopped
 
+  redis:
+    build: ./bonus/redis
+    container_name: redis
+    networks:
+      - inception-net
+    restart: unsless-stopped
 
 volumes:
   db-data:

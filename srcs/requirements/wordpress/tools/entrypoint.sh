@@ -32,6 +32,12 @@ if [ ! -f /var/www/html/wp-config.php ]; then
         --role=author \
         --allow-root
 
+    wp config set WP_REDIS_HOST redis --path=/var/www/html --allow-root
+    wp config set WP_REDIS_PORT 6379 --path=/var/www/html --allow-root
+
+    wp plugin install redis-cache --activate --allow-root --path=/var/www/html
+    wp redis enable --allow-root --path=/var/www/html
+
 fi
 
 exec php-fpm8.2 --nodaemonize
