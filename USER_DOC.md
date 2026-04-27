@@ -5,6 +5,9 @@ This project runs a self-hosted WordPress website acessible via HTTPS. It is com
 - **WordPress** — the website and content management system where you can create and manage pages, posts, and media
 - **MariaDB** — the database that stores all WordPress content, users, and settings
 - **NGINX** — the web server that receives all incoming traffic and secures it with HTTPS
+- **Redis** — an in-memory cache that speeds up the WordPress site by reducing database queries
+- **Adminer** — a web interface for inspecting and managing the database, accessible at `/adminer`
+- **Static site** — a project showcase page accessible at `/static`
 
 As an end user or administrator, you interact only with the website and the WordPress admin panel <!--— the underlying services run automatically in the background.-->
 
@@ -53,6 +56,26 @@ https://mchingi.42.fr/wp-admin
 
 Log in with the administrator credentials stored in `secrets/wp_admin_password.txt`. The administrator username is defined in `srcs/.env` under `WP_ADMIN_USER`.
 
+**Adminer — Database Interface:**
+```
+https://mchingi.42.fr/adminer
+```
+
+Fill in the login form as follows:
+
+```
+System:   MySQL
+Server:   mariadb
+Username: wpuser
+Password: (contents of secrets/db_password.txt)
+Database: wordpress
+```
+
+**Static site — Project Showcase:**
+```
+https://mchingi.42.fr/static
+```
+
 ---
 
 ## Locating and Managing Credentials
@@ -78,13 +101,16 @@ Non-sensitive configuration (usernames, email addresses, domain name) is in `src
 ```bash
 docker ps
 ```
-You should see three containers — `nginx`, `wordpress`, and `mariadb` — all with status `Up`.
+You should see six containers — `nginx`, `wordpress`, `mariadb`, `redis`, `adminer`, and `static` — all with status `Up`.
 
 **Check logs for a specific service:**
 ```bash
 docker logs nginx
 docker logs wordpress
 docker logs mariadb
+docker logs redis
+docker logs adminer
+docker logs static
 ```
 
 **Quick connectivity check:**
@@ -92,3 +118,12 @@ docker logs mariadb
 curl -k https://mchingi.42.fr -I
 ```
 A response of `HTTP/1.1 200 OK` confirms the site is up and reachable.
+
+**Verify Redis cache is active:**
+```bash
+docker exec -it redis redis-cli ping
+# Expected response: PONG
+
+docker exec -it wordpress wp redis status --path=/var/www/html --allow-root
+# Expected: Status: Connected
+```
