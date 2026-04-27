@@ -62,6 +62,13 @@ services:
       - inception-net
     restart: unless-stopped
 
+  static:
+    build: ./bonus/static
+    container_name: static
+    networks:
+      - inception-net
+    restart: unless-stopped
+
 volumes:
   db-data:
     driver: local
