@@ -6,13 +6,14 @@ _This project has been created as part of the 42 curriculum by mchingi_
 
 Inception is a system administration project that has as a goal build a small but complete web infrastructure using Docker and Docker Compose, running entirely inside a virtual machine.
 
-The infrastructure is composed of three services, each running in its own dedicated container built from scratch:
+The infrastructure is composed of six services, each running in its own dedicated container built from scratch:
 
 - **NGINX** — the sole entry point into the infrastructure, handling HTTPS traffic on port 443 with TLSv1.2/TLSv1.3
 - **WordPress + PHP-FPM** — the application layer, processing PHP and serving the WordPress CMS
 - **MariaDB** — the database layer, storing all WordPress data
 - **Redis** — an in-memory cache that reduces database load and accelerates WordPress page loads
 - **Adminer** — a lightweight web interface for inspecting and managing the MariaDB database, accessible at `/adminer`
+- **Static site** — a very simple and beautiful static website written in HTML and accessible at `/static`
 
 The containers communicate through a private Docker Network. Data is persisted via Docker named volumes. No ready-made images are used: every container is built from a custom Dockerfile based on Debian 12.
 
@@ -20,6 +21,9 @@ The containers communicate through a private Docker Network. Data is persisted v
 
 **Why Debian 12 as the base image?**
 Debian provides a stable, well-documented environment with a mature package manager. Alpine Linux would produce smaller images but uses `musl libc` instead of `glibc`, which can cause unexpected behaviour with certain packages. For a learning project where predictability matters, Debian is the safer choice also because i'm already used to it.
+
+**Why a static site in HTML?**
+The static site bonus is as simple as it is to be and I didn't want to do something hard. The subject explicitly forbids PHP for this service, making HTML the cleanest choice.
 
 ### Virtual Machines vs Docker
 
@@ -31,7 +35,7 @@ Environment variables are the standard mechanism for passing configuration into 
 
 ### Docker Network vs Host Network
 
-
+With `network: host`, the container shares the host machine's network stack directly — there is no isolation, and any port the container opens is immediately accessible on the host. With a Docker bridge network (used in this project), each container gets its own virtual network interface and IP address inside an isolated network. Containers on the same network can reach each other by service name (resolved via Docker's internal DNS), but the outside world can only access what is explicitly published via port mapping. The subject explicitly forbids `network: host` for this reason — using it would bypass the network isolation that is central to the architecture.
 
 ### Docker Volumes vs Bind Mounts
 
@@ -81,6 +85,8 @@ WP_USER=regularuser
 WP_USER_EMAIL=user@mchingi.42.fr
 ```
 
+> **Important:** The `secrets/` directory and `.env` file are listed in `.gitignore` and must never be committed to version control. No passwords appear anywhere in the repository.
+
 ### Build and Run
 
 ```bash
@@ -112,6 +118,8 @@ Database: wordpress
 ```
 <!-- To log in as root and see all databases, use 'root' as the username and leave the Database field empty. -->
 
+**Static site** is available at `https://mchingi.42.fr/static`.
+
 To verify individual containers:
 
 ```bash
@@ -124,6 +132,7 @@ docker logs wordpress
 docker logs mariadb
 docker logs redis
 docker logs adminer
+docker logs static
 
 # Enter a running container for inspection
 docker exec -it mariadb bash
