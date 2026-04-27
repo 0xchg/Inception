@@ -7,7 +7,7 @@ This project runs a self-hosted WordPress website acessible via HTTPS. It is com
 - **NGINX** — the web server that receives all incoming traffic and secures it with HTTPS
 - **Redis** — an in-memory cache that speeds up the WordPress site by reducing database queries
 - **Adminer** — a web interface for inspecting and managing the database, accessible at `/adminer`
-- **Static site** — a project showcase page accessible at `/static`
+- **Static site** — a website page accessible at `/static`
 
 As an end user or administrator, you interact only with the website and the WordPress admin panel <!--— the underlying services run automatically in the background.-->
 
