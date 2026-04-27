@@ -69,6 +69,16 @@ services:
       - inception-net
     restart: unless-stopped
 
+  portainer:
+    build: ./bonus/portainer
+    container_name: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    networks:
+      - inception-net
+    restart: unless-stoped
+
 volumes:
   db-data:
     driver: local
@@ -83,6 +93,13 @@ volumes:
       type: none
       o: bind
       device: /home/${USER}/data/wordpress
+
+  portainer-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/portainer
 
 secrets:
   db_password:
