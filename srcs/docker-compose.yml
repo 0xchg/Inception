@@ -53,6 +53,15 @@ services:
       - inception-net
     restart: unless-stopped
 
+  adminer:
+    build: ./bonus/adminer
+    container_name: adminer
+    depends_on:
+      - mariadb
+    networks:
+      - inception-net
+    restart: unless-stopped
+
 volumes:
   db-data:
     driver: local
