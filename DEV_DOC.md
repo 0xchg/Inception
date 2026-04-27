@@ -45,13 +45,30 @@ inception/
         │   │   └── www.conf
         │   └── tools/
         │       └── entrypoint.sh
-        └── mariadb/
-            ├── Dockerfile
-            ├── conf/
-            │   └── 50-server.cnf
-            └── tools/
-                ├── entrypoint.sh
-                └── template.sql
+        ├── mariadb/
+        │   ├── Dockerfile
+        │   ├── conf/
+        │   │   └── 50-server.cnf
+        │   └── tools/
+        │       ├── entrypoint.sh
+        │       └── template.sql
+        └── bonus/
+            ├── redis/
+            │   ├── Dockerfile
+            │   └── conf/
+            │       └── redis.conf
+            ├── adminer/
+            │   ├── Dockerfile
+            │   ├── conf/
+            │   │   └── www.conf
+            │   └── tools/
+            │       └── entrypoint.sh
+            └── static/
+                ├── Dockerfile
+                ├── conf/
+                │   └── site.conf
+                └── www/
+                    └── index.html
 ```
 
 ---
@@ -131,7 +148,7 @@ The Makefile calls:
 docker compose -f srcs/docker-compose.yml up -d --build
 ```
 
-On first run, the WordPress entrypoint detects that `wp-config.php` does not exist and performs the full installation automatically using WP-CLI. On subsequent runs it skips the installation and starts PHP-FPM directly.
+On first run, the WordPress entrypoint detects that `wp-config.php` does not exist and performs the full installation automatically using WP-CLI — including Redis configuration and plugin setup. On subsequent runs it skips the installation and starts PHP-FPM directly.
 
 ---
 
@@ -147,6 +164,9 @@ docker ps
 docker logs -f nginx
 docker logs -f wordpress
 docker logs -f mariadb
+docker logs -f redis
+docker logs -f adminer
+docker logs -f static
 ```
 
 **Enter a running container:**
@@ -154,6 +174,7 @@ docker logs -f mariadb
 docker exec -it mariadb bash
 docker exec -it wordpress bash
 docker exec -it nginx bash
+docker exec -it redis bash
 ```
 
 **Inspect a container (network, mounts, env):**
@@ -170,3 +191,87 @@ docker volume ls
 ```bash
 docker system prune -f
 ```
+
+## Verifying the Database
+
+Connect to MariaDB from inside the container to inspect the database state:
+
+```bash
+docker exec -it mariadb mysql \
+  -u root \
+  -p$(cat secrets/db_root_password.txt)
+```
+
+```sql
+-- List all databases
+SHOW DATABASES;
+
+-- Verify users and their allowed hosts
+SELECT User, Host FROM mysql.user;
+
+-- Verify WordPress user privileges
+SHOW GRANTS FOR 'wpuser'@'%';
+```
+
+---
+
+## Verifying Redis
+
+```bash
+# Check Redis is responding
+docker exec -it redis redis-cli ping
+# Expected: PONG
+
+# Monitor Redis commands in real time
+docker exec -it redis redis-cli monitor
+
+# Check Redis integration status from WordPress
+docker exec -it wordpress wp redis status --path=/var/www/html --allow-root
+# Expected: Status: Connected, Drop-in: Valid
+```
+
+---
+
+## Data Persistence
+
+All persistent data lives outside the containers on the host filesystem, mounted via Docker named volumes:
+
+| Volume | Host path | Container path | Contents |
+|---|---|---|---|
+| `wp-files` | `/home/mchingi/data/wordpress` | `/var/www/html` | WordPress core, themes, plugins, uploads |
+| `db-data` | `/home/mchingi/data/mariadb` | `/var/lib/mysql` | MariaDB database files |
+
+Both volumes use the `local` driver with `bind` options, meaning Docker manages them as named volumes while storing the data at a predictable host path. Stopping or removing containers does not affect this data. Only `make fclean` removes it.
+
+To inspect the data directly on the host:
+
+```bash
+ls ~/data/wordpress
+ls ~/data/mariadb
+```
+
+---
+
+## How Secrets Work Internally
+
+Docker Compose mounts each secret as a read-only file inside the container:
+
+```
+/run/secrets/db_password
+/run/secrets/db_root_password
+/run/secrets/wp_admin_password
+/run/secrets/wp_user_password
+```
+
+Each entrypoint script reads the relevant secret at startup:
+
+```bash
+export DB_PASSWORD=$(cat /run/secrets/db_password)
+```
+
+This means passwords are never present in:
+- Dockerfiles
+- Environment variables (`docker inspect` will not reveal them)
+- The `.env` file
+- Any image layer
+- The git repository
