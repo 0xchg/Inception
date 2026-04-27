@@ -2,10 +2,10 @@
 set -e
 
 # Espera que o MariaDB esteja pronto
-until mysqladmin ping -h mariadb -u ${DB_USER} -p$(cat /run/secrets/db_password) --silent 2>/dev/null; do
-    echo "A aguardar MariaDB..."
-    sleep 2
-done
+# until mysqladmin ping -h mariadb -u ${DB_USER} -p$(cat /run/secrets/db_password) --silent 2>/dev/null; do
+#     echo "A aguardar MariaDB..."
+#     sleep 2
+# done
 
 if [ ! -f /var/www/html/wp-config.php ]; then
 
@@ -37,11 +37,11 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 
     wp plugin install redis-cache --activate --allow-root --path=/var/www/html
     
-    until redis-cli -h redis ping 2>/dev/null | grep -q PONG; do
-        echo "A aguardar Redis..."
-        sleep 1
-    done
-    
+    # until redis-cli -h redis ping 2>/dev/null | grep -q PONG; do
+    #     echo "A aguardar Redis..."
+    #     sleep 1
+    # done
+
     wp redis enable --allow-root --path=/var/www/html
 
 fi
