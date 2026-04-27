@@ -36,6 +36,12 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     wp config set WP_REDIS_PORT 6379 --path=/var/www/html --allow-root
 
     wp plugin install redis-cache --activate --allow-root --path=/var/www/html
+    
+    until redis-cli -h redis ping 2>/dev/null | grep -q PONG; do
+        echo "A aguardar Redis..."
+        sleep 1
+    done
+    
     wp redis enable --allow-root --path=/var/www/html
 
 fi
