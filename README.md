@@ -8,11 +8,11 @@ Inception is a system administration project that has as a goal build a small bu
 
 The infrastructure is composed of three services, each running in its own dedicated container built from scratch:
 
-- **NGINX** 
-
-- **WordPress + PHP-FPM**
-
-- **MariaDB**
+- **NGINX** — the sole entry point into the infrastructure, handling HTTPS traffic on port 443 with TLSv1.2/TLSv1.3
+- **WordPress + PHP-FPM** — the application layer, processing PHP and serving the WordPress CMS
+- **MariaDB** — the database layer, storing all WordPress data
+- **Redis** — an in-memory cache that reduces database load and accelerates WordPress page loads
+- **Adminer** — a lightweight web interface for inspecting and managing the MariaDB database, accessible at `/adminer`
 
 The containers communicate through a private Docker Network. Data is persisted via Docker named volumes. No ready-made images are used: every container is built from a custom Dockerfile based on Debian 12.
 
@@ -23,11 +23,11 @@ Debian provides a stable, well-documented environment with a mature package mana
 
 ### Virtual Machines vs Docker
 
-
+A virtual machine emulates complete hardware and runs a full guest operating system on top of a hypervisor. Each VM carries gigabytes of OS overhead and takes minutes to boot. Docker containers share the host kernel through Linux namespaces and cgroups — they isolate only the process and its dependencies, not the entire OS. The result is images measured in megabytes and startup times measured in seconds. For deploying reproducible application environments, containers are dramatically more efficient.
 
 ### Secrets vs Environment Variables
 
-
+Environment variables are the standard mechanism for passing configuration into containers. They are readable by any process inside the container and can be exposed in `docker inspect` output, image layers, or version control if mishandled. Docker secrets provide a more secure alternative: the secret value is mounted as a file inside the container under `/run/secrets/<name>` and is never written into the image or visible in environment variable listings.
 
 ### Docker Network vs Host Network
 
@@ -101,6 +101,17 @@ make fclean
 
 Once running, open a browser and navigate to `https://mchingi.42.fr`. Accept the self-signed certificate warning. The WordPress site should be accessible.
 
+**Adminer** is available at `https://mchingi.42.fr/adminer`. Log in with:
+ 
+```
+System:   MySQL
+Server:   mariadb
+Username: wpuser
+Password: (contents of secrets/db_password.txt)
+Database: wordpress
+```
+<!-- To log in as root and see all databases, use 'root' as the username and leave the Database field empty. -->
+
 To verify individual containers:
 
 ```bash
@@ -111,11 +122,18 @@ docker ps
 docker logs nginx
 docker logs wordpress
 docker logs mariadb
+docker logs redis
+docker logs adminer
 
 # Enter a running container for inspection
 docker exec -it mariadb bash
-```
 
+# Verify Redis is responding
+docker exec -it redis redis-cli ping
+ 
+# Verify Redis cache is active in WordPress
+docker exec -it wordpress wp redis status --path=/var/www/html --allow-root
+```
 
 ---
 
@@ -139,6 +157,9 @@ Lacroix, J. (2016). *Mastering Ubuntu Server: Gain expertise in the art of deplo
 - [FPM Configuration](https://www.php.net/manual/en/install.fpm.configuration.php)
 - [What is SSL/TLS?](https://www.ssl.com/article/what-is-ssl-tls-an-in-depth-guide/)
 - [Install your SSL certificate on NGINX](https://knowledge.digicert.com/tutorials/how-to-create-a-csr-using-openssl-and-install-your-ssl-certificate-on-a-nginx-server) 
+- [Redis Documentation](https://redis.io/docs/)
+- [Redis Object Cache Plugin](https://wordpress.org/plugins/redis-cache/)
+- [Adminer](https://www.adminer.org/)
 
 ### AI Usage
 
