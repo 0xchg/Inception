@@ -6,7 +6,7 @@ _This project has been created as part of the 42 curriculum by mchingi_
 
 Inception is a system administration project that has as a goal build a small but complete web infrastructure using Docker and Docker Compose, running entirely inside a virtual machine.
 
-The infrastructure is composed of six services, each running in its own dedicated container built from scratch:
+The infrastructure is composed of seven services, each running in its own dedicated container built from scratch:
 
 - **NGINX** — the sole entry point into the infrastructure, handling HTTPS traffic on port 443 with TLSv1.2/TLSv1.3
 - **WordPress + PHP-FPM** — the application layer, processing PHP and serving the WordPress CMS
@@ -14,10 +14,11 @@ The infrastructure is composed of six services, each running in its own dedicate
 - **Redis** — an in-memory cache that reduces database load and accelerates WordPress page loads
 - **Adminer** — a lightweight web interface for inspecting and managing the MariaDB database, accessible at `/adminer`
 - **Static site** — a very simple and beautiful static website written in HTML and accessible at `/static`
+- **Portainer** — a container management interface available through NGINX at `/portainer/`
 
 The containers communicate through a private Docker Network. Data is persisted via Docker named volumes. No ready-made images are used: every container is built from a custom Dockerfile based on Debian 12.
 
-### Design Choise
+### Design Choices
 
 **Why Debian 12 as the base image?**
 Debian provides a stable, well-documented environment with a mature package manager. Alpine Linux would produce smaller images but uses `musl libc` instead of `glibc`, which can cause unexpected behaviour with certain packages. For a learning project where predictability matters, Debian is the safer choice also because i'm already used to it.
@@ -38,6 +39,10 @@ Environment variables are the standard mechanism for passing configuration into 
 With `network: host`, the container shares the host machine's network stack directly — there is no isolation, and any port the container opens is immediately accessible on the host. With a Docker bridge network (used in this project), each container gets its own virtual network interface and IP address inside an isolated network. Containers on the same network can reach each other by service name (resolved via Docker's internal DNS), but the outside world can only access what is explicitly published via port mapping. The subject explicitly forbids `network: host` for this reason — using it would bypass the network isolation that is central to the architecture.
 
 ### Docker Volumes vs Bind Mounts
+
+A bind mount maps a specific host path directly into a container (for example `/home/user/data:/var/lib/mysql`). This is transparent and convenient, but tightly couples the container to host path layout and permissions. A Docker volume is managed by Docker and is portable across compose runs, easier to inspect/manage with Docker tooling, and less brittle when moving environments.
+
+This project uses Docker named volumes with the local driver and bind options: it gets the operational clarity of fixed host locations (`/home/<user>/data/...`) while still treating storage as first-class Docker volumes in Compose.
 
 
 
@@ -120,6 +125,8 @@ Database: wordpress
 
 **Static site** is available at `https://mchingi.42.fr/static`.
 
+**Portainer** is available at `https://mchingi.42.fr/portainer/`. On first access, create the Portainer admin account, then manage local Docker resources from the web UI.
+
 To verify individual containers:
 
 ```bash
@@ -133,6 +140,7 @@ docker logs mariadb
 docker logs redis
 docker logs adminer
 docker logs static
+docker logs portainer
 
 # Enter a running container for inspection
 docker exec -it mariadb bash
@@ -169,6 +177,7 @@ Lacroix, J. (2016). *Mastering Ubuntu Server: Gain expertise in the art of deplo
 - [Redis Documentation](https://redis.io/docs/)
 - [Redis Object Cache Plugin](https://wordpress.org/plugins/redis-cache/)
 - [Adminer](https://www.adminer.org/)
+- [Portainer Documentation](https://docs.portainer.io/)
 
 ### AI Usage
 
@@ -180,3 +189,5 @@ Claude by Anthropic was used throughout this project as a learning assistant. Sp
 - Explain the reasoning behind each configuration choice rather than just providing solutions
 
 All code was written, reviewed, and understood by the author. AI was used as a tutor and reference, not as a code generator.
+
+- **GitHub Copilot (GPT-5 mini) — contribution summary:** Assisted interactively inside the repository to: update and reword documentation (including `README.md`, `USER_DOC.md`, and `DEV_DOC.md`), add the Portainer bonus-service details, correct headings and minor typos, and apply focused code/document patches. All edits were performed under the author's direction; the author reviewed and accepted every change.
