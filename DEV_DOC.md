@@ -63,6 +63,8 @@ inception/
             │   │   └── www.conf
             │   └── tools/
             │       └── entrypoint.sh
+            ├── portainer/
+            │   └── Dockerfile
             └── static/
                 ├── Dockerfile
                 ├── conf/
@@ -118,6 +120,7 @@ The named volumes store data on the host at `/home/<user>/data/`. The Makefile c
 ```bash
 mkdir -p ~/data/wordpress
 mkdir -p ~/data/mariadb
+mkdir -p ~/data/portainer
 ```
 
 ---
@@ -167,6 +170,7 @@ docker logs -f mariadb
 docker logs -f redis
 docker logs -f adminer
 docker logs -f static
+docker logs -f portainer
 ```
 
 **Enter a running container:**
@@ -175,6 +179,7 @@ docker exec -it mariadb bash
 docker exec -it wordpress bash
 docker exec -it nginx bash
 docker exec -it redis bash
+docker exec -it portainer sh
 ```
 
 **Inspect a container (network, mounts, env):**
@@ -240,6 +245,7 @@ All persistent data lives outside the containers on the host filesystem, mounted
 |---|---|---|---|
 | `wp-files` | `/home/mchingi/data/wordpress` | `/var/www/html` | WordPress core, themes, plugins, uploads |
 | `db-data` | `/home/mchingi/data/mariadb` | `/var/lib/mysql` | MariaDB database files |
+| `portainer-data` | `/home/mchingi/data/portainer` | `/data` | Portainer users, settings, and endpoint metadata |
 
 Both volumes use the `local` driver with `bind` options, meaning Docker manages them as named volumes while storing the data at a predictable host path. Stopping or removing containers does not affect this data. Only `make fclean` removes it.
 
@@ -248,6 +254,7 @@ To inspect the data directly on the host:
 ```bash
 ls ~/data/wordpress
 ls ~/data/mariadb
+ls ~/data/portainer
 ```
 
 ---
