@@ -1,6 +1,6 @@
 # User Documentation
 
-This project runs a self-hosted WordPress website acessible via HTTPS. It is composed of three services working together:
+This project runs a self-hosted WordPress website accessible via HTTPS. The stack provides seven services working together:
 
 - **WordPress** — the website and content management system where you can create and manage pages, posts, and media
 - **MariaDB** — the database that stores all WordPress content, users, and settings
@@ -8,6 +8,7 @@ This project runs a self-hosted WordPress website acessible via HTTPS. It is com
 - **Redis** — an in-memory cache that speeds up the WordPress site by reducing database queries
 - **Adminer** — a web interface for inspecting and managing the database, accessible at `/adminer`
 - **Static site** — a website page accessible at `/static`
+- **Portainer** — a web interface to monitor and manage Docker containers, networks, images, and volumes, accessible at `/portainer/`
 
 As an end user or administrator, you interact only with the website and the WordPress admin panel <!--— the underlying services run automatically in the background.-->
 
@@ -19,7 +20,7 @@ All commands are run from the root of the repository
 ```bash
 make
 ```
-This builds all Docker images and starts all three services. On first run, WordPress is installed automatically
+This builds all Docker images and starts all services. On first run, WordPress is installed automatically.
 
 **Stop the project (preserves all data):**
 ```bash
@@ -76,6 +77,13 @@ Database: wordpress
 https://mchingi.42.fr/static
 ```
 
+**Portainer — Container Administration Panel:**
+```
+https://mchingi.42.fr/portainer/
+```
+
+On first access, Portainer asks you to create an admin account. After that, select the local environment to manage the project containers from the browser.
+
 ---
 
 ## Locating and Managing Credentials
@@ -101,7 +109,7 @@ Non-sensitive configuration (usernames, email addresses, domain name) is in `src
 ```bash
 docker ps
 ```
-You should see six containers — `nginx`, `wordpress`, `mariadb`, `redis`, `adminer`, and `static` — all with status `Up`.
+You should see seven containers — `nginx`, `wordpress`, `mariadb`, `redis`, `adminer`, `static`, and `portainer` — all with status `Up`.
 
 **Check logs for a specific service:**
 ```bash
@@ -111,6 +119,7 @@ docker logs mariadb
 docker logs redis
 docker logs adminer
 docker logs static
+docker logs portainer
 ```
 
 **Quick connectivity check:**
@@ -127,3 +136,9 @@ docker exec -it redis redis-cli ping
 docker exec -it wordpress wp redis status --path=/var/www/html --allow-root
 # Expected: Status: Connected
 ```
+
+**Verify Portainer is reachable through NGINX:**
+```bash
+curl -k https://mchingi.42.fr/portainer/ -I
+```
+An HTTP response (for example `HTTP/1.1 200 OK` or a redirect) confirms the Portainer route is available.
