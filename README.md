@@ -44,8 +44,6 @@ A bind mount maps a specific host path directly into a container (for example `/
 
 This project uses Docker named volumes with the local driver and bind options: it gets the operational clarity of fixed host locations (`/home/<user>/data/...`) while still treating storage as first-class Docker volumes in Compose.
 
-
-
 ---
 
 ## Instructions 
