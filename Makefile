@@ -6,7 +6,7 @@
 #    By: mchingi <mchingi@student.42luanda.com>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/14 15:00:12 by mchingi           #+#    #+#              #
-#    Updated: 2026/04/30 17:52:24 by mchingi          ###   ########.fr        #
+#    Updated: 2026/04/30 18:01:00 by mchingi          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,11 +26,11 @@ clean:
 	$(DOWN) --rmi all
 
 fclean:
-	sudo rm -rf /home/$(USER)/data
 	$(DOWN) --volumes --rmi all
+	sudo rm -rf /home/$(USER)/data
 	docker system prune -af
 
-re: fclean all
+re: clean all
 
 .PHONY: all down clean fclean re
 
